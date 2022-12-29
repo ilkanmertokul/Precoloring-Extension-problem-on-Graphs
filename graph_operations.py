@@ -21,6 +21,7 @@ class GraphOperator:
     # intensity : probability of 2 nodes connection. Should be between 0.01 and 1.
     def __init__(self, graph, node_count):
 
+        print("Successfully created the graph!")
         self.graph = graph
         self.node_count = node_count
 
@@ -39,18 +40,25 @@ class GraphOperator:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
 
             i = 0
-            node_count = len(spamreader[0])
             for row in spamreader:
 
+                node_count = len(row)
                 # First row, get colors.
                 if i == 0:
-                    for j in range(0, len(row)):
+                    for j in range(0, node_count):
                         graph.add_node(j, color=int(row[j]), colored_neighbor=0)
                 else:
-                    for j in range(i - 1, len(row)):
+                    for j in range(i, node_count):
                         if int(row[j]) == 1:
                             graph.add_edge(i - 1, j)
+                            print(f"edge {i-1} to {j}")
                 i += 1
+
+            #Update neighbors for colored nodes.
+            for i in range(node_count):
+                if graph.nodes[i]["color"] != 0:
+                    for neighbor in graph.neighbors(i):
+                        graph.nodes[neighbor]["colored_neighbor"] += 1
 
         return cls(graph, node_count)
 
