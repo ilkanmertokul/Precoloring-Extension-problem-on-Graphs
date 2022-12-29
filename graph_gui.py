@@ -25,8 +25,35 @@ class GraphGraphicalInterface:
         self.e2.insert(0, 'NodeCount')
         self.e2.pack(side='right')
 
+        self.b2 = tk.Button(self.root, text="Build from filename", command=self.build_graph_from_file)
+        self.b2.pack(side='left')
+
+        self.e3 = tk.Entry(self.root)
+        self.e3.insert(0, 'filename')
+        self.e3.pack(side='left')
+
     def run(self):
         self.root.mainloop()
+
+    def build_graph_from_file(self):
+        f = plt.figure(figsize=(5, 4))
+        plt.axis('off')
+        plt.axis('off')
+
+        a = graph_operations.GraphOperator.from_filename("../graph_custom.csv")
+
+        # Input color.
+        a.dsatur_Algorithm()
+
+        pos = nx.circular_layout(a.graph)
+
+        labeldict = {}
+        for i in range(0, a.node_count):
+            labeldict[i] = a.graph.nodes[i]["color"]
+
+        nx.draw_networkx(a.graph, pos=pos, labels=labeldict)
+        canvas = FigureCanvasTkAgg(f, master=self.root)
+        canvas.get_tk_widget().pack(side='bottom', fill='both', expand=1)  # ERROR Tk.
 
     def build_graph(self):
         f = plt.figure(figsize=(5, 4))
