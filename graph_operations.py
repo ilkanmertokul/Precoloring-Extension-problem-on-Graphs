@@ -7,8 +7,10 @@
 import random
 import time
 import networkx as nx
+import csv
 
-#GraphOperator class as a wrapper class for networkx graph.
+
+# GraphOperator class as a wrapper class for networkx graph.
 # It can create graphs
 # - randomly -> Give node count (int) and intensity (int)
 # - from file. -> Give file path (string)
@@ -17,7 +19,43 @@ class GraphOperator:
     # This constructor creates a graph.
     # node count: node count is the node count that graph has. Every node has at least 1 neighbor.
     # intensity : probability of 2 nodes connection. Should be between 0.01 and 1.
-    def __init__(self, node_count, intensity=0.75):
+    def __init__(self, graph, node_count):
+
+        self.graph = graph
+        self.node_count = node_count
+
+        # Creating graph can sometimes create a noise while trying to stay at 1 piece. This clears it.
+        if len(graph.nodes) > self.node_count:
+            graph.remove_node(len(graph.nodes) - 1)
+            print("Clearing node noise")
+
+    @classmethod
+    def from_filename(cls, filename):
+
+        graph = nx.Graph()
+        node_count = 0
+
+        with open(filename, newline='') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+            i = 0
+            node_count = len(spamreader[0])
+            for row in spamreader:
+
+                # First row, get colors.
+                if i == 0:
+                    for j in range(0, len(row)):
+                        graph.add_node(j, color=int(row[j]), colored_neighbor=0)
+                else:
+                    for j in range(i - 1, len(row)):
+                        if int(row[j]) == 1:
+                            graph.add_edge(i - 1, j)
+                i += 1
+
+        return cls(graph, node_count)
+
+    @classmethod
+    def from_random_generator(cls, node_count, intensity=0.75):
 
         if intensity > 1 or intensity < 0.001:
             print("Invalid graph intensity. Defaulting back to 0.25")
@@ -45,17 +83,7 @@ class GraphOperator:
                     j = random.randint(0, node_count)
                 graph.add_edge(i, j)
 
-        self.graph = graph
-        self.node_count = node_count
-        self.intensity = intensity
-
-        # Creating graph can sometimes create a noise while trying to stay at 1 piece. This clears it.
-        if len(graph.nodes) > self.node_count:
-            graph.remove_node(len(graph.nodes) - 1)
-            print("Clearing node noise")
-
-    def __init__(self, filename):
-        print("aaaa")
+        return cls(graph, node_count)
 
     # Assign a color to a node. Then, mark neighbors.
     # vertice : index of graph node, int.
@@ -126,7 +154,8 @@ class GraphOperator:
                 if int(self.graph.nodes[i]["colored_neighbor"] > 0):
                     uncolored_with_colored_neighbor.append(i)
 
-            print(f"2 - Uncolored with colored neighbor: {len(uncolored_with_colored_neighbor)} {uncolored_with_colored_neighbor}")
+            print(
+                f"2 - Uncolored with colored neighbor: {len(uncolored_with_colored_neighbor)} {uncolored_with_colored_neighbor}")
             if len(uncolored_with_colored_neighbor) == 0:
                 print("--- %s seconds ---" % (time.time() - start_time))
                 print("Done algo!")

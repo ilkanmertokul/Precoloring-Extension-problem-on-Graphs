@@ -1,6 +1,6 @@
 import graph_operations
 
-a = graph_operations.GraphOperator(5000, 0.5)
+a = graph_operations.GraphOperator.from_random_generator(5000, 0.5)
 
 a.assign_color_to_node(1, 2)
 #print(a.)

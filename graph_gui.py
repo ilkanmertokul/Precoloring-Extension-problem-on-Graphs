@@ -33,7 +33,7 @@ class GraphGraphicalInterface:
         plt.axis('off')
         plt.axis('off')
 
-        a = graph_operations.GraphOperator(int(self.e2.get()), float(self.e1.get()))
+        a = graph_operations.GraphOperator.from_random_generator(int(self.e2.get()), float(self.e1.get()))
 
         # Input color.
         a.assign_color_to_node(1, 1)
