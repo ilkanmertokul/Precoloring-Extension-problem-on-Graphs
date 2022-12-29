@@ -54,6 +54,9 @@ class GraphOperator:
             graph.remove_node(len(graph.nodes) - 1)
             print("Clearing node noise")
 
+    def __init__(self, filename):
+        print("aaaa")
+
     # Assign a color to a node. Then, mark neighbors.
     # vertice : index of graph node, int.
     # color : color to give, int, positive.
