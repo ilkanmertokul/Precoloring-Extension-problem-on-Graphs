@@ -8,6 +8,7 @@ import networkx as nx
 
 import graph_operations
 
+
 class GraphGraphicalInterface:
 
     def __init__(self):
@@ -34,8 +35,8 @@ class GraphGraphicalInterface:
 
         a = graph_operations.GraphOperator(int(self.e2.get()), float(self.e1.get()))
 
-        #Input color.
-        a.assign_color_to_node(1,1)
+        # Input color.
+        a.assign_color_to_node(1, 1)
         a.dsatur_Algorithm()
 
         pos = nx.circular_layout(a.graph)

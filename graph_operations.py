@@ -1,30 +1,28 @@
-# This file helps user to generate graphs:
-#
-# input -> Give node counts,
-# output-> and receive randomly connected graph
-#
-# uses networkx for graph representation,
-# uses matplotlib for visual representation.
+# İlkan Mert Okul,
+# ilkan.okul2018@gtu.edu.tr
+# 1801042649
+
+# This class is helper class for using networkx graphs.
 
 import random
 import time
-
 import networkx as nx
 
-
+#GraphOperator class as a wrapper class for networkx graph.
+# It can create graphs
+# - randomly -> Give node count (int) and intensity (int)
+# - from file. -> Give file path (string)
 class GraphOperator:
 
-    # This method creates a graph (from networkx lib).
+    # This constructor creates a graph.
+    # node count: node count is the node count that graph has. Every node has at least 1 neighbor.
+    # intensity : probability of 2 nodes connection. Should be between 0.01 and 1.
     def __init__(self, node_count, intensity=0.75):
-        # node count: node count is the node count that graph has. Every node has at least 1 neighbor.
-        # intensity : probability of 2 nodes connection. Should be between 0.01 and 1.
 
         if intensity > 1 or intensity < 0.001:
             print("Invalid graph intensity. Defaulting back to 0.25")
             intensity = 0.25
-
         print(f" Creating {node_count} node graph with intensity of {intensity}.")
-
         graph = nx.Graph()
 
         # 1-Initialize nodes
@@ -51,11 +49,14 @@ class GraphOperator:
         self.node_count = node_count
         self.intensity = intensity
 
+        # Creating graph can sometimes create a noise while trying to stay at 1 piece. This clears it.
         if len(graph.nodes) > self.node_count:
             graph.remove_node(len(graph.nodes) - 1)
             print("Clearing node noise")
 
-    # Assign a color to a node. Then, mark neighbors. Vertice is index integer!
+    # Assign a color to a node. Then, mark neighbors.
+    # vertice : index of graph node, int.
+    # color : color to give, int, positive.
     def assign_color_to_node(self, vertice, color):
         self.graph.nodes[vertice]["color"] = color
 
@@ -63,7 +64,8 @@ class GraphOperator:
         for neighbor in self.graph.neighbors(vertice):
             self.graph.nodes[neighbor]["colored_neighbor"] += 1
 
-    # First missing positive problem, it is O(n), vertice is index integer!
+    # First missing positive problem, it is O(n)
+    # vertice : index of graph node, int.
     def get_assignable_color_intensity(self, vertice):
 
         # Get all neighbours color intensity to array.
@@ -95,7 +97,7 @@ class GraphOperator:
 
         return i + 2
 
-    # MUST HAVE AT LEAST 1 COLORED NODE!
+    # Dsatur algorithm for partial colored graphs.
     def dsatur_Algorithm(self):
 
         start_time = time.time()
@@ -121,8 +123,7 @@ class GraphOperator:
                 if int(self.graph.nodes[i]["colored_neighbor"] > 0):
                     uncolored_with_colored_neighbor.append(i)
 
-            print(
-                f"2 - Uncolored with colored neighbor: {len(uncolored_with_colored_neighbor)} {uncolored_with_colored_neighbor}")
+            print(f"2 - Uncolored with colored neighbor: {len(uncolored_with_colored_neighbor)} {uncolored_with_colored_neighbor}")
             if len(uncolored_with_colored_neighbor) == 0:
                 print("--- %s seconds ---" % (time.time() - start_time))
                 print("Done algo!")
