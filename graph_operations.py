@@ -16,20 +16,23 @@ import csv
 # - from file. -> Give file path (string)
 class GraphOperator:
 
-    # This constructor creates a graph.
-    # node count: node count is the node count that graph has. Every node has at least 1 neighbor.
-    # intensity : probability of 2 nodes connection. Should be between 0.01 and 1.
+    # Constructor that saves the parameters for class properties.
+    # graph : graph for the GraphOperator.
+    # node_count : node count for graph.
     def __init__(self, graph, node_count):
 
         print("Successfully created the graph!")
         self.graph = graph
         self.node_count = node_count
+        self.time = -1
 
         # Creating graph can sometimes create a noise while trying to stay at 1 piece. This clears it.
         if len(graph.nodes) > self.node_count:
             graph.remove_node(len(graph.nodes) - 1)
             print("Clearing node noise")
 
+    # This function passes its parameter to the constructor.
+    # filename : path to the file to read.
     @classmethod
     def from_filename(cls, filename):
 
@@ -51,10 +54,10 @@ class GraphOperator:
                     for j in range(i, node_count):
                         if int(row[j]) == 1:
                             graph.add_edge(i - 1, j)
-                            print(f"edge {i-1} to {j}")
+                            print(f"edge {i - 1} to {j}")
                 i += 1
 
-            #Update neighbors for colored nodes.
+            # Update neighbors for colored nodes.
             for i in range(node_count):
                 if graph.nodes[i]["color"] != 0:
                     for neighbor in graph.neighbors(i):
@@ -62,6 +65,9 @@ class GraphOperator:
 
         return cls(graph, node_count)
 
+    # This function passes its parameter to the constructor.
+    # node count: node count is the node count that graph has. Every node has at least 1 neighbor.
+    # intensity : probability of 2 nodes connection. Should be between 0.01 and 1.
     @classmethod
     def from_random_generator(cls, node_count, intensity=0.75):
 
@@ -152,9 +158,7 @@ class GraphOperator:
 
             # If not left any uncolored nodes, it is finished!
             if len(uncolored) == 0:
-                print("--- %s seconds ---" % (time.time() - start_time))
-                print("Done algo!")
-                return
+                break
 
             # Get all uncolored with neighbor colored. O(n)
             uncolored_with_colored_neighbor = []
@@ -162,15 +166,33 @@ class GraphOperator:
                 if int(self.graph.nodes[i]["colored_neighbor"] > 0):
                     uncolored_with_colored_neighbor.append(i)
 
-            print(
-                f"2 - Uncolored with colored neighbor: {len(uncolored_with_colored_neighbor)} {uncolored_with_colored_neighbor}")
+            print(f"2 - Uncolored with colored neighbor: "
+                  f"{len(uncolored_with_colored_neighbor)} {uncolored_with_colored_neighbor}")
             if len(uncolored_with_colored_neighbor) == 0:
-                print("--- %s seconds ---" % (time.time() - start_time))
-                print("Done algo!")
-                return
+                break
 
             # Color all of them with assignable colors O(n).
             for i in uncolored_with_colored_neighbor:
                 color_code = self.get_assignable_color_intensity(i)
                 self.assign_color_to_node(i, color_code)
                 print(f"Assigning to {i} color {color_code}")
+
+        self.get_max_color_after_algorithm()
+        self.time = time.time() - start_time
+        print("--- %s seconds ---" % (time.time() - start_time))
+        print("Done algo!")
+        return
+
+    # Return max color intensity that is assigned to nodes. O(n)
+    def get_max_color_after_algorithm(self):
+
+        max_color = -1
+        for i in range(0, self.node_count):
+            if max_color < self.graph.nodes[i]["color"]:
+                max_color = self.graph.nodes[i]["color"]
+
+        print(f"Max color is : {max_color}")
+        return max_color
+
+    def get_time(self):
+        return self.time
