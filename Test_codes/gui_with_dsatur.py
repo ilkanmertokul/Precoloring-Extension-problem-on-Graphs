@@ -1,4 +1,3 @@
-
 import graph_gui
 
 a = graph_gui.GraphGraphicalInterface()

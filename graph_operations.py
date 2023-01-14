@@ -146,7 +146,7 @@ class GraphOperator:
     def dsatur_Algorithm(self):
 
         start_time = time.time()
-        # O(n) * (n + n + n) = O(3n^2)
+        # O(n) * (n + n + n) = O(n^2)
         while True:
 
             # Use loop for each uncolored node. O(n)
@@ -171,7 +171,7 @@ class GraphOperator:
             if len(uncolored_with_colored_neighbor) == 0:
                 break
 
-            # Color all of them with assignable colors O(n).
+            # Color all of them with assignable colors O(n^2).
             for i in uncolored_with_colored_neighbor:
                 color_code = self.get_assignable_color_intensity(i)
                 self.assign_color_to_node(i, color_code)

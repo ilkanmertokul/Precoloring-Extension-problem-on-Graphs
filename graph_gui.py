@@ -16,7 +16,7 @@ class GraphGraphicalInterface:
     def __init__(self):
         self.root = tk.Tk()
 
-        self.b3 = tk.Button(self.root, text="Run recoloring algorithm", command=self.run_algorithm)
+        self.b3 = tk.Button(self.root, text="Run precoloring algorithm", command=self.run_algorithm)
         self.b3.pack(side='right')
 
         self.b1 = tk.Button(self.root, text="Build a random graph", command=self.build_graph_randomly)
@@ -101,6 +101,6 @@ class GraphGraphicalInterface:
             nx.draw_networkx(self.user_graph.graph, pos=pos, labels=labeldict)
 
         canvas = FigureCanvasTkAgg(f, master=self.root)
-        canvas.get_tk_widget().pack(side='right', expand=1)  # ERROR Tk.
+        canvas.get_tk_widget().pack(side='left', expand=1)  # ERROR Tk.
 
 
